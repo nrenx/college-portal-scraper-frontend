@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/college-portal-scraper-frontend/static/css/main.d1bd0deb.css",
+    "main.js": "/college-portal-scraper-frontend/static/js/main.a1c673dc.js",
+    "index.html": "/college-portal-scraper-frontend/index.html",
+    "main.d1bd0deb.css.map": "/college-portal-scraper-frontend/static/css/main.d1bd0deb.css.map",
+    "main.a1c673dc.js.map": "/college-portal-scraper-frontend/static/js/main.a1c673dc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d1bd0deb.css",
+    "static/js/main.a1c673dc.js"
+  ]
+}
