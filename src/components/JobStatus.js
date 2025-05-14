@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API_USERNAME, API_PASSWORD } from '../config';
+import { API_URL, API_USERNAME, API_PASSWORD } from '../config';
 
 function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
   const [status, setStatus] = useState({
@@ -15,12 +15,12 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        console.log('Fetching job status from:', `http://127.0.0.1:8000/job/${jobId}`);
+        console.log('Fetching job status from:', `${API_URL}/job/${jobId}`);
 
         // Create base64 encoded credentials
         const credentials = btoa(`${API_USERNAME}:${API_PASSWORD}`);
 
-        const response = await fetch(`http://127.0.0.1:8000/job/${jobId}`, {
+        const response = await fetch(`${API_URL}/job/${jobId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { API_USERNAME, API_PASSWORD } from '../config';
+import { API_URL, API_USERNAME, API_PASSWORD } from '../config';
 
 function ScraperForm({ onJobCreated }) {
   const [formData, setFormData] = useState({
@@ -41,17 +41,17 @@ function ScraperForm({ onJobCreated }) {
     setError(null);
 
     // Debug info
-    console.log('API URL:', 'http://127.0.0.1:8000');
+    console.log('API URL:', API_URL);
     console.log('API Username:', API_USERNAME);
     console.log('Form Data:', formData);
 
     try {
-      console.log('Sending request to:', `http://127.0.0.1:8000/scrape`);
+      console.log('Sending request to:', `${API_URL}/scrape`);
 
       // Create base64 encoded credentials
       const credentials = btoa(`${API_USERNAME}:${API_PASSWORD}`);
 
-      const response = await fetch(`http://127.0.0.1:8000/scrape`, {
+      const response = await fetch(`${API_URL}/scrape`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
