@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/college-portal-scraper-frontend/static/css/main.d1bd0deb.css",
-    "main.js": "/college-portal-scraper-frontend/static/js/main.9eca0d27.js",
+    "main.css": "/college-portal-scraper-frontend/static/css/main.23d5a9b9.css",
+    "main.js": "/college-portal-scraper-frontend/static/js/main.d04ff8c1.js",
     "index.html": "/college-portal-scraper-frontend/index.html",
-    "main.d1bd0deb.css.map": "/college-portal-scraper-frontend/static/css/main.d1bd0deb.css.map",
-    "main.9eca0d27.js.map": "/college-portal-scraper-frontend/static/js/main.9eca0d27.js.map"
+    "main.23d5a9b9.css.map": "/college-portal-scraper-frontend/static/css/main.23d5a9b9.css.map",
+    "main.d04ff8c1.js.map": "/college-portal-scraper-frontend/static/js/main.d04ff8c1.js.map"
   },
   "entrypoints": [
-    "static/css/main.d1bd0deb.css",
-    "static/js/main.9eca0d27.js"
+    "static/css/main.23d5a9b9.css",
+    "static/js/main.d04ff8c1.js"
   ]
 }
