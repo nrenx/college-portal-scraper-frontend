@@ -15,24 +15,41 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        console.log('Fetching job status from:', `${API_URL}/job/${jobId}`);
+        // Log the full API URL for debugging
+        const apiUrl = `${API_URL}/job/${jobId}`;
+        console.log('Fetching job status from:', apiUrl);
+        console.log('API credentials:', { username: API_USERNAME, password: '******' });
 
         // Create base64 encoded credentials
         const credentials = btoa(`${API_USERNAME}:${API_PASSWORD}`);
 
-        const response = await fetch(`${API_URL}/job/${jobId}`, {
+        // Add a timeout to the fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+        const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': `Basic ${credentials}`
-          }
+            'Authorization': `Basic ${credentials}`,
+            'Origin': window.location.origin
+          },
+          signal: controller.signal,
+          // Don't include credentials for CORS requests with Basic Auth
+          credentials: 'omit'
         });
 
+        // Clear the timeout
+        clearTimeout(timeoutId);
+
         console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
 
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          const errorText = await response.text();
+          console.error('Error response body:', errorText);
+          throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText || 'No details'}`);
         }
 
         const data = await response.json();
@@ -47,15 +64,14 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
         }
       } catch (err) {
         console.error('Error fetching job status:', err);
-        console.error('Error details:', {
-          message: err.message,
-          response: err.response,
-          request: err.request,
-          config: err.config
-        });
 
-        // More detailed error logging
-        if (err.response) {
+        // Check for specific error types
+        if (err.name === 'AbortError') {
+          setError('Network Error: Request timed out. The server might be down or unreachable.');
+        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          setError(`Network Error: Unable to connect to the server. This might be due to CORS restrictions or the server being down.
+                   Please check if the backend is running and accessible at ${API_URL}.`);
+        } else if (err.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
           console.error('Response data:', err.response.data);
