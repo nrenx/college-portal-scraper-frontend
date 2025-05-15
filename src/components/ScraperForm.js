@@ -129,7 +129,18 @@ function ScraperForm({ onJobCreated }) {
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">{error.includes('Authentication failed') ? 'Login Error' : 'Error'}</p>
           <p>{error}</p>
+          {error.includes('Authentication failed') && (
+            <div className="mt-2">
+              <p>Please check that:</p>
+              <ul className="list-disc ml-5">
+                <li>Your username and password are correct</li>
+                <li>Your college portal account is active</li>
+                <li>The college portal website is accessible</li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
 

@@ -12,6 +12,9 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
   // We're setting loading state but using status.status instead for UI rendering
   const [error, setError] = useState(null);
 
+  // Track how long the job has been running
+  const [runningTime, setRunningTime] = useState(0);
+
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -94,15 +97,28 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
     fetchStatus();
 
     // Then set up polling every 5 seconds if job is still running
-    const interval = setInterval(() => {
+    const statusInterval = setInterval(() => {
       if (status.status === 'running' || status.status === 'queued') {
         fetchStatus();
       }
     }, 5000);
 
-    // Clean up interval on unmount
-    return () => clearInterval(interval);
+    // Set up a timer to track how long the job has been running
+    const runningInterval = setInterval(() => {
+      if (status.status === 'running' || status.status === 'queued') {
+        setRunningTime(prev => prev + 1);
+      }
+    }, 1000);
+
+    // Clean up intervals on unmount
+    return () => {
+      clearInterval(statusInterval);
+      clearInterval(runningInterval);
+    };
   }, [jobId, status.status, onJobCompleted, onJobFailed]);
+
+  // If job has been running for more than 15 minutes (900 seconds), show a warning
+  const showTimeoutWarning = runningTime > 900;
 
   // Function to render status badge
   const renderStatusBadge = (status) => {
@@ -136,7 +152,33 @@ function JobStatus({ jobId, onJobCompleted, onJobFailed, onReset }) {
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">{error.includes('Authentication failed') ? 'Login Error' : 'Error'}</p>
           <p>{error}</p>
+          {error.includes('Authentication failed') && (
+            <div className="mt-2">
+              <p>Please check that:</p>
+              <ul className="list-disc ml-5">
+                <li>Your username and password are correct</li>
+                <li>Your college portal account is active</li>
+                <li>The college portal website is accessible</li>
+              </ul>
+              <p className="mt-2">Click "Start New Job" below to try again with correct credentials.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Show timeout warning if job has been running for too long */}
+      {showTimeoutWarning && (status.status === 'running' || status.status === 'queued') && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">Warning: Job is taking longer than expected</p>
+          <p>This job has been running for over {Math.floor(runningTime / 60)} minutes. It may be stuck or experiencing issues.</p>
+          <p className="mt-2">You can:</p>
+          <ul className="list-disc ml-5 mt-1">
+            <li>Wait longer for it to complete</li>
+            <li>Click "Start New Job" to try again</li>
+            <li>Try with fewer data options selected</li>
+          </ul>
         </div>
       )}
 
